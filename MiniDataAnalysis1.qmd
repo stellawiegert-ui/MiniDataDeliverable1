@@ -120,24 +120,61 @@ music |>
 
 Write your findings here.
 
-
+The first variable I investigated was which albums spent the longest time on the Billboard top 100. By arranging the greatest albums of all time according to that metric, we can see that Pink Floyd's Dark Side of the Moon, Adele's 21, and Kendrick Lamar's good kid, m.A.A.d city spent the longest time on that chart. Additionally, I also investigated which album genre on had the most time on the Billboard charts, with the top being Hard Rock/Metal and the bottom being Reggae (although there is an anomoly with the Afrobeat genre that will require further investigation). The last variable I investigated was how the gender of the artist affected the time the album spent on the Billboard chart, with males artists signficicantly outnumbering the female and mixed group albums. 
 
 
 
 #### Data Set 2
 ```{r}
 ### Explore 3 variables of data set 2 ###
+glimpse(genderassessment)
+
+#country that had highest average score
+#company that had highest score
+#What score category had the most zeroes
 
 ```
 
+```{r}
+genderassessment |> #country that had highest average score
+  group_by(country) |>
+  summarize(mean_score = mean(score)) |>
+  arrange(desc(mean_score))
+  
+```
+
+```{r}
+#company that had highest score
+genderassessment |>
+  group_by(company) |>
+  summarize(mean_score = mean(score)) |>
+  arrange(desc(mean_score))
+
+genderassessment |>
+  filter(company == "Eni")
+```
+
+```{r}
+#What score category had the most zeroes
+genderassessment |>
+  pivot_longer(
+    cols = !c(company, country, region, industry, ownership, year, score, percent_score),
+    names_to = "category",
+    values_to = "value"
+  ) |>
+  group_by(category) |>
+  summarize(total_score = sum(value, na.rm = TRUE)) |>
+  arrange(total_score)
+```
+
+
 Write your findings here.
 
+The first variable I investigated was which country had the overall highest score across all the gender-equality metrics with all the companies that are based in it. The top three were Cyprus, Portugal, and Czechia, while the bottom three that had any data/companies to score were Congo, Dem. Rep., Angola, and Vietnam. The next variable I investigated was which company had the highest overall gender-equality score, which was Eni, which is an oil and gas company based in Italy, while the lowest scoring company was tied across six companies, with a total range in the score of all the companies scored of 26.9-8.2=18.7 points. Lastly, I also investigated which category of scoring had the best overall score across all the companies, which was grievance_mechanisms, and which category was the lowest scoring category overall, which was supply_chain_gender_leadership. Notably, gender_pay_gap was not the lowest-scoring category, indicating that getting more women into leadership roles could become more of a primary advocacy concern in addition to equal gender pay. 
 
 
 
 <!----------------------------------------------------------------------------->
-
-
 
 
 
@@ -149,7 +186,7 @@ It's time to choose only one data set. State the data set that you've chosen, an
 
 <!-------------------------- Start your work below ---------------------------->
 
-
+I have chosen the genderassessment dataset because I want to explore further the relationship between different score categories and see if companies that score lower in certain categories (leadership categories) have an associated lower score in other categories (pay-related categories). Additionally, although on the surface it seems like there is a lot more cleaning to do in the rolling stone dataset, I think there's a lot more exploratory potential and inference potential in the genderassessment dataset that I'm curious about. These are the reasons that I have chosen this dataset. 
 
 <!----------------------------------------------------------------------------->
 
@@ -164,7 +201,7 @@ Write your research questions **as questions**, and be specific. You can change 
 
 <!-------------------------- Start your work below ---------------------------->
 
-
+Is there a relationship between scores in leadership-measuring categories and pay-related categories? Does this differ by type of company and across regions?
 
 
 <!----------------------------------------------------------------------------->
