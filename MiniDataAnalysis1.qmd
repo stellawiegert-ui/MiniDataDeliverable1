@@ -228,7 +228,18 @@ Your task is to create a table that calculates the proportion of missing values 
 
 ```{r}
 ### Explore missingness here ###
-
+genderassessment |>
+  pivot_longer(
+    names_to = "category",
+    values_to = "value", 
+    cols = company:violence_remediation,
+    values_transform = as.character
+  ) |>
+  group_by(category) |>
+  summarize(missingness = sum(is.na(value)),
+            pct_missingness = mean(is.na(value)) * 100) |>
+  arrange(desc(missingness))
+  
 ```
 
 
@@ -252,7 +263,7 @@ If missingness is not an issue, describe why.
 
 <!-------------------------- Start your work below ---------------------------->
 
-
+Missingness is not an issue in this data because the only missing values for my data are in the industry and ownership categories that describe the companies that were scored. Even then, there is <1% missingness in both of these variables, meaning that even though the industry is relevant to our research question, it will not significantly affect our analysis. 
 
 
 <!----------------------------------------------------------------------------->
@@ -279,8 +290,15 @@ Show the first 6 rows of the tidied data.
 <!-------------------------- Start your work below ---------------------------->
 ```{r}
 
-
-
+genderassessment |>
+  select(company, region, industry, ownership, score, gender_leadership,
+         supply_chain_gender_leadership,
+         gender_pay_gap, carer_leave_paid, living_wage_supply_chain) -> gender_analysis #selecting the columns form the dataset that we want to 
+#compare and the information about the companies
+  
+gender_analysis |>
+  head(6) #displaying the first 6 rows of data - no further tidying needed because each row is one 
+#observation (company) with each column containing one variable and each cell containing a value for that variable and observation - this could then be used to answer my research questions from above
 
 ```
 
@@ -294,31 +312,23 @@ Use any functions from the `tidyverse` to create one table that outputs the mean
 Show the outputted table.
 
 <!-------------------------- Start your work below ---------------------------->
+
 ```{r}
-
-
-music |>
-  mutate(spo_pop = as.numeric(`Spotify Popularity`)) |>
-  ggplot(aes(x=spo_pop, y=`2020-2003 Differential`)) +
-  geom_point()
-
-#weeks on billboard correspond to spptify popularoty
-
-music |>
-  mutate(spo_pop = as.numeric(`Spotify Popularity`)) |>
-  mutate(weeks = as.numeric(`Wks on Billboard`)) |>
-  ggplot(aes(x=spo_pop, y=weeks)) +
-  geom_point()
-
-music |>
-  mutate(weeks = as.numeric(`Wks on Billboard`)) |>
-  arrange(desc(weeks))
-
-music |>
-  
-  #artist gender split by 2003, 2012, and 2020 rank - bar chart split by gender
-
+gender_analysis |>
+  pivot_longer(
+    cols = score:living_wage_supply_chain,
+    names_to = "variable",
+    values_to = "value"
+  ) |> #tidying needed here to be able to summarize the numerical variables like this, but not needed 
+  #above because then would not be able to answer my by region/company question from above
+  group_by(variable) |>
+  summarize(
+    mean = mean(value, na.rm = TRUE),
+    max = max(value, na.rm = TRUE),
+    min = min(value, na.rm = TRUE)
+  )
 ```
+
 
 <!----------------------------------------------------------------------------->
 
